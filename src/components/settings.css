@@ -1,0 +1,17 @@
+.settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.icon {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

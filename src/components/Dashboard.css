@@ -1,0 +1,67 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 8px;
+  text-align: center;
+
+  gap: 3%;
+}
+
+#cog,
+#X {
+  color: inherit;
+}
+
+.main_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+@media only screen and (max-width: 1300px) {
+  .main_container {
+    flex-direction: column;
+  }
+
+  .tahan_container {
+    max-width: 600px;
+    width: 90%;
+  }
+
+  .iframe {
+    max-width: 80%;
+  }
+}
+
+.tahan_container {
+  border: 1px solid black;
+  border-radius: 8px;
+  text-align: center;
+  flex: 0 10 45%;
+  margin: 10px;
+}
+
+.iframe {
+  width: 80%;
+  height: 250px;
+}
+
+.spin {
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
