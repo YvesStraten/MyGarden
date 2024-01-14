@@ -22,6 +22,8 @@ const Fields = [
 		id: "maxLx",
 	},
 ];
+
+// TODO: send updated settings to thingspeak
 const Settings = () => {
 	return (
 		<div class="settings">
