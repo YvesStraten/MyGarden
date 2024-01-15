@@ -1,12 +1,26 @@
+import setting from "../types/settings";
 import tahan from "../types/tahan";
 
 type fetcher = {
-	tahanData: tahan[];
 	setTahanData: (args: tahan[]) => void;
-	setLoading?: (args: boolean) => void;
+	setLoading: (args: boolean) => void;
+	setSettings: (args: setting[]) => void;
 };
 
-const fetcher = ({ tahanData, setTahanData, setLoading }: fetcher) => {
+const fetcher = async ({ setTahanData, setLoading, setSettings }: fetcher) => {
+	fetch(
+		"https://api.thingspeak.com/channels/2401167/feeds.json?api_key=C73AQ3WVDKZEKTTI&results=1",
+	)
+		.then((res) => res.json())
+		.then((data) => {
+			const settings = [];
+			for (let i = 1; i <= Object.keys(data["feeds"][0]).length - 2; i++) {
+				const settingName = data["channel"][`field${i}`];
+				const settingValue = data["feeds"][0][`field${i}`];
+				settings.push({ setting: settingName, value: settingValue });
+			}
+			setSettings(settings);
+		});
 	fetch(
 		"https://api.thingspeak.com/channels/2400298/feeds.json?api_key=SVWPDJG7Y4WJZUKX&results=1",
 	)
@@ -36,9 +50,8 @@ const fetcher = ({ tahanData, setTahanData, setLoading }: fetcher) => {
 				});
 			}
 			setTahanData(newData);
-			console.log(tahanData);
-			setLoading(false);
 		});
+	setLoading(false);
 };
 
 export default fetcher;

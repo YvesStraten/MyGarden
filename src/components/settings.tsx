@@ -1,47 +1,87 @@
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./settings.css";
+import { useState } from "react";
+import formtype from "../types/formtype";
 
 const Fields = [
 	{
 		label: "Max temperature:",
 		type: "number",
-		id: "maxTemp",
+		id: "maxtemp",
 	},
 
 	{
 		label: "Max humidity:",
 		type: "number",
-		id: "maxHumid",
+		id: "maxhumid",
 	},
 
 	{
 		label: "Max Light:",
 		type: "number",
-		id: "maxLx",
+		id: "maxlight",
 	},
 ];
 
-// TODO: send updated settings to thingspeak
 const Settings = () => {
+	const navigate = useNavigate();
+	const [formData, setFormData] = useState<formtype>({
+		maxtemp: "",
+		maxhumid: "",
+		maxlight: "",
+	});
+
+	const handleChange = (event: any) => {
+		const { name, value } = event.target;
+		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+	};
+
+	const updateSettings = async (event: any) => {
+		event?.preventDefault();
+		let base = new URL(
+			"https://api.thingspeak.com/update?api_key=3MH3CVQDFPIP1G0T",
+		);
+
+		for (let i = 0; i < Object.keys(formData).length; i++) {
+			base.searchParams.append(
+				`field${i + 1}`,
+				`${Object.values(formData)[i]}`,
+			);
+		}
+
+		await fetch(base.href)
+			.then((res) => res.json())
+			.then((data) => console.log(data));
+
+		navigate("/");
+	};
+
 	return (
-		<div class="settings">
+		<div className="formSettings">
 			<form>
-				<div class="icon">
+				<div className="icon">
 					<Link to="/" id="X">
 						<FontAwesomeIcon icon={faXmark} />
 					</Link>
 				</div>
 				{Fields.map((field) => (
-					<>
-						<label for={field.id}>{field.label}</label>
+					<div key={field.id}>
+						<label htmlFor={field.id}>{field.label}</label>
 						<br />
-						<input id={field.id} type={field.type} />
+						<input
+							id={field.id}
+							type={field.type}
+							onChange={handleChange}
+							value={formData[field.id]}
+							name={field.id}
+							required
+						/>
 						<br />
-					</>
+					</div>
 				))}
-				<button type="submit" class="submit">
+				<button type="submit" className="submit" onClick={updateSettings}>
 					<FontAwesomeIcon icon={faCheck} />
 				</button>
 			</form>
