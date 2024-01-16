@@ -2,56 +2,63 @@ import setting from "../types/settings";
 import tahan from "../types/tahan";
 
 type fetcher = {
-	setTahanData: (args: tahan[]) => void;
-	setLoading: (args: boolean) => void;
-	setSettings: (args: setting[]) => void;
+  setTahanData: (args: tahan[]) => void;
+  setLoading: (args: boolean) => void;
+  setSettings: (args: setting[]) => void;
 };
 
 const fetcher = async ({ setTahanData, setLoading, setSettings }: fetcher) => {
-	fetch(
-		"https://api.thingspeak.com/channels/2401167/feeds.json?api_key=C73AQ3WVDKZEKTTI&results=1",
-	)
-		.then((res) => res.json())
-		.then((data) => {
-			const settings = [];
-			for (let i = 1; i <= Object.keys(data["feeds"][0]).length - 2; i++) {
-				const settingName = data["channel"][`field${i}`];
-				const settingValue = data["feeds"][0][`field${i}`];
-				settings.push({ setting: settingName, value: settingValue });
-			}
-			setSettings(settings);
-		});
-	fetch(
-		"https://api.thingspeak.com/channels/2400298/feeds.json?api_key=SVWPDJG7Y4WJZUKX&results=1",
-	)
-		.then((res) => res.json())
-		.then((data) => {
-			const newData = [];
+  await fetch(
+    "https://api.thingspeak.com/channels/2401167/feeds.json?api_key=C73AQ3WVDKZEKTTI&results=1",
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const Settings = [];
+      const size = Object.keys(data["feeds"][0]).length - 2;
 
-			// Gets the number of fields
-			let size = Object.keys(data["feeds"][0]).length - 2;
+      for (let i = 1; i <= size; i++) {
+        const settingName = data["channel"][`field${i}`];
+        const settingValue = data["feeds"][0][`field${i}`];
 
-			for (let i = 1; i <= size; i++) {
-				// Generate random id for each field
-				const id = crypto.randomUUID();
+        Settings.push({
+          setting: settingName,
+          value: Number(settingValue),
+        });
+      }
+      setSettings(Settings);
+    });
 
-				// Gets the field values and rounds them
-				const field = data["feeds"][0][`field${i}`];
-				const rounded = parseFloat(field);
+  await fetch(
+    "https://api.thingspeak.com/channels/2400298/feeds.json?api_key=SVWPDJG7Y4WJZUKX&results=1",
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const newData = [];
 
-				// Field name
-				const fieldName = data["channel"][`field${i}`];
-				const graphLink = `https://thingspeak.com/channels/2400298/charts/${i}?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&api_key=SVWPDJG7Y4WJZUKX`;
-				newData.push({
-					id: id,
-					name: fieldName,
-					value: rounded,
-					graph: graphLink,
-				});
-			}
-			setTahanData(newData);
-		});
-	setLoading(false);
+      // Gets the number of fields
+      let size = Object.keys(data["feeds"][0]).length - 2;
+
+      for (let i = 1; i <= size; i++) {
+        // Generate random id for each field
+        const id = crypto.randomUUID();
+
+        // Gets the field values and rounds them
+        const field = data["feeds"][0][`field${i}`];
+        const rounded = parseFloat(field);
+
+        // Field name
+        const fieldName = data["channel"][`field${i}`];
+        const graphLink = `https://thingspeak.com/channels/2400298/charts/${i}?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&api_key=SVWPDJG7Y4WJZUKX`;
+        newData.push({
+          id: id,
+          name: fieldName,
+          value: rounded,
+          graph: graphLink,
+        });
+      }
+      setTahanData(newData);
+    });
+  setLoading(false);
 };
 
 export default fetcher;

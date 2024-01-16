@@ -1,6 +1,6 @@
 type setting = {
-	setting: string;
-	value: string | number;
+  setting: string;
+  value: number;
 };
 
 export default setting;

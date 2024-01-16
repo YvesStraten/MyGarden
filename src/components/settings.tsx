@@ -6,87 +6,108 @@ import { useState } from "react";
 import formtype from "../types/formtype";
 
 const Fields = [
-	{
-		label: "Max temperature:",
-		type: "number",
-		id: "maxtemp",
-	},
+  {
+    label: "Max temperature:",
+    type: "number",
+    id: "maxtemp",
+  },
 
-	{
-		label: "Max humidity:",
-		type: "number",
-		id: "maxhumid",
-	},
+  {
+    label: "Min temperature:",
+    type: "number",
+    id: "mintemp",
+  },
 
-	{
-		label: "Max Light:",
-		type: "number",
-		id: "maxlight",
-	},
+  {
+    label: "Max humidity:",
+    type: "number",
+    id: "maxhumid",
+  },
+
+  {
+    label: "Min humidity:",
+    type: "number",
+    id: "minhumid",
+  },
+
+  {
+    label: "Max Light:",
+    type: "number",
+    id: "maxlight",
+  },
+
+  {
+    label: "Max Light:",
+    type: "number",
+    id: "minlight",
+  },
 ];
 
 const Settings = () => {
-	const navigate = useNavigate();
-	const [formData, setFormData] = useState<formtype>({
-		maxtemp: "",
-		maxhumid: "",
-		maxlight: "",
-	});
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<formtype>({
+    maxtemp: "",
+    mintemp: "",
+    maxhumid: "",
+    minhumid: "",
+    maxlight: "",
+    minlight: "",
+  });
 
-	const handleChange = (event: any) => {
-		const { name, value } = event.target;
-		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-	};
+  const handleChange = (event: any) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: parseInt(value),
+    }));
+  };
 
-	const updateSettings = async (event: any) => {
-		event?.preventDefault();
-		let base = new URL(
-			"https://api.thingspeak.com/update?api_key=3MH3CVQDFPIP1G0T",
-		);
+  const updateSettings = async (event: any) => {
+    event?.preventDefault();
+    let base = new URL(
+      "https://api.thingspeak.com/update?api_key=3MH3CVQDFPIP1G0T",
+    );
 
-		for (let i = 0; i < Object.keys(formData).length; i++) {
-			base.searchParams.append(
-				`field${i + 1}`,
-				`${Object.values(formData)[i]}`,
-			);
-		}
+    for (let i = 0; i < Object.keys(formData).length; i++) {
+      base.searchParams.append(`field${i + 1}`, Object.values(formData)[i]);
+    }
 
-		await fetch(base.href)
-			.then((res) => res.json())
-			.then((data) => console.log(data));
+    await fetch(base.href)
+      .then((res) => res.json())
+      .then((data) => console.log(data));
 
-		navigate("/");
-	};
+    navigate("/");
+  };
 
-	return (
-		<div className="formSettings">
-			<form>
-				<div className="icon">
-					<Link to="/" id="X">
-						<FontAwesomeIcon icon={faXmark} />
-					</Link>
-				</div>
-				{Fields.map((field) => (
-					<div key={field.id}>
-						<label htmlFor={field.id}>{field.label}</label>
-						<br />
-						<input
-							id={field.id}
-							type={field.type}
-							onChange={handleChange}
-							value={formData[field.id]}
-							name={field.id}
-							required
-						/>
-						<br />
-					</div>
-				))}
-				<button type="submit" className="submit" onClick={updateSettings}>
-					<FontAwesomeIcon icon={faCheck} />
-				</button>
-			</form>
-		</div>
-	);
+  return (
+    <div className="formSettings">
+      <form>
+        <div className="icon">
+          <Link to="/" id="X">
+            <FontAwesomeIcon icon={faXmark} />
+          </Link>
+        </div>
+        {Fields.map((field) => (
+          <div key={field.id}>
+            <label htmlFor={field.id}>{field.label}</label>
+            <br />
+            <input
+              id={field.id}
+              type={field.type}
+              onChange={handleChange}
+              value={formData[field.id]}
+              name={field.id}
+              required
+            />
+            <br />
+          </div>
+        ))}
+        <button type="submit" className="submit" onClick={updateSettings}>
+          <FontAwesomeIcon icon={faCheck} />
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default Settings;
