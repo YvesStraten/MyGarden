@@ -9,26 +9,6 @@ type fetcher = {
 
 const fetcher = async ({ setTahanData, setLoading, setSettings }: fetcher) => {
   await fetch(
-    "https://api.thingspeak.com/channels/2401167/feeds.json?api_key=C73AQ3WVDKZEKTTI&results=1",
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      const Settings = [];
-      const size = Object.keys(data["feeds"][0]).length - 2;
-
-      for (let i = 1; i <= size; i++) {
-        const settingName = data["channel"][`field${i}`];
-        const settingValue = data["feeds"][0][`field${i}`];
-
-        Settings.push({
-          setting: settingName,
-          value: Number(settingValue),
-        });
-      }
-      setSettings(Settings);
-    });
-
-  await fetch(
     "https://api.thingspeak.com/channels/2400298/feeds.json?api_key=SVWPDJG7Y4WJZUKX&results=1",
   )
     .then((res) => res.json())
@@ -57,6 +37,26 @@ const fetcher = async ({ setTahanData, setLoading, setSettings }: fetcher) => {
         });
       }
       setTahanData(newData);
+    });
+
+  await fetch(
+    "https://api.thingspeak.com/channels/2401167/feeds.json?api_key=C73AQ3WVDKZEKTTI&results=1",
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const Settings = [];
+      const size = Object.keys(data["feeds"][0]).length - 2;
+
+      for (let i = 1; i <= size; i++) {
+        const settingName = data["channel"][`field${i}`];
+        const settingValue = data["feeds"][0][`field${i}`];
+
+        Settings.push({
+          setting: settingName,
+          value: Number(settingValue),
+        });
+      }
+      setSettings(Settings);
     });
   setLoading(false);
 };

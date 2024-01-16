@@ -26,10 +26,12 @@ const Dashboard = ({ setLoading }: dashboard) => {
       if (field.name.includes("Temp")) {
         if (field.value > returnVal(0)) {
           Notify("Too hot! Turning Ac on");
+          console.log("hot");
           return;
         }
         if (field.value < returnVal(1)) {
           Notify("Too cold! Turning heater on");
+          console.log("cold");
           return;
         } else {
           console.log("Perfect!");
@@ -40,10 +42,12 @@ const Dashboard = ({ setLoading }: dashboard) => {
       if (field.name.includes("Humidity")) {
         if (field.value > returnVal(2)) {
           Notify("Too humid!, stopping sprinklers!");
+          console.log("humid");
           return;
         }
         if (field.value < returnVal(3)) {
           Notify("Too dry!, starting sprinklers!");
+          console.log("dry");
           return;
         } else {
           console.log("Perfect!");
@@ -54,10 +58,12 @@ const Dashboard = ({ setLoading }: dashboard) => {
       if (field.name.includes("Light")) {
         if (field.value > returnVal(4)) {
           Notify("Too bright! Closing shutters");
+          console.log("Bright");
           return;
         }
         if (field.value < returnVal(5)) {
           Notify("Too dim! Opening shutters");
+          console.log("Dim");
           return;
         } else {
           console.log("Perfect!");
