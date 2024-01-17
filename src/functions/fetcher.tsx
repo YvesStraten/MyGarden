@@ -1,5 +1,6 @@
 import setting from "../types/settings";
 import tahan from "../types/tahan";
+import Checker from "./Checker";
 
 type fetcher = {
 	setTahanData: (args: tahan[]) => void;
