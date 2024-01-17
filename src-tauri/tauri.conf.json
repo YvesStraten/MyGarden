@@ -23,7 +23,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.yvesstraten.MyGarden",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -39,7 +39,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "tahan-app",
+        "title": "MyGarden",
         "width": 800,
         "height": 600
       }
