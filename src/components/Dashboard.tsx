@@ -1,169 +1,138 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import "./Dashboard.css";
 import { Link } from "react-router-dom";
-import fetcher from "../functions/fetcher";
-import tahan from "../types/tahan";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
+import Fetcher from "../functions/fetcher";
+import tahan from "../types/tahan";
 import setting from "../types/settings";
 import Notify from "../functions/Notify";
+import Display from "./Display";
+import "./Dashboard.css";
 
 type dashboard = {
-  setLoading: (args: boolean) => void;
+	setLoading: (args: boolean) => void;
 };
 
 const Dashboard = ({ setLoading }: dashboard) => {
-  const [tahanData, setTahanData] = useState<tahan[]>([]);
-  const [settingsData, setSettings] = useState<setting[]>([]);
-  const [hover, setHover] = useState<boolean>(false);
+	/* 	Stores states for the cog, data and settings */
+	const [tahanData, setTahanData] = useState<tahan[]>([]);
+	const [settingsData, setSettings] = useState<setting[]>([]);
+	const [hover, setHover] = useState<boolean>(false);
 
-  const checker = () => {
-    const returnVal = (index: number) => {
-      return settingsData[index]["value"];
-    };
+	const checker = () => {
+		tahanData.map((field) => {
+			const compare = (includes: string, field: any, offset: number = 0) => {
+				// Gets current setting
+				const returnVal = (index: number) => {
+					return settingsData[index]["value"];
+				};
 
-    tahanData.map((field) => {
-      if (field.name.includes("Temp")) {
-        if (field.value > returnVal(0)) {
-          Notify("Too hot! Turning Ac on");
-          console.log("hot");
-          return;
-        }
-        if (field.value < returnVal(1)) {
-          Notify("Too cold! Turning heater on");
-          console.log("cold");
-          return;
-        } else {
-          console.log("Perfect!");
-          return;
-        }
-      }
+				// Array containing messages
+				const messages = [
+					"Too hot! Turning AC on",
+					"Too Cold! Turning AC off",
+					"Too humid!, stopping sprinklers!",
+					"Too dry!, turning on Sprinklers",
+					"Too bright! Closing shutters",
+					"Too dim!, Opening shutters",
+				];
 
-      if (field.name.includes("Humidity")) {
-        if (field.value > returnVal(2)) {
-          Notify("Too humid!, stopping sprinklers!");
-          console.log("humid");
-          return;
-        }
-        if (field.value < returnVal(3)) {
-          Notify("Too dry!, starting sprinklers!");
-          console.log("dry");
-          return;
-        } else {
-          console.log("Perfect!");
-          return;
-        }
-      }
+				/* 				Checks if the name of the field matches and then compares the value of that field with the setting */
+				if (field.name.includes(includes)) {
+					if (field.value > returnVal(0 + offset)) {
+						Notify(`${messages[0 + offset]} for ${field.name}`);
+						console.log("High");
+						return;
+					} else if (field.value < returnVal(1 + offset)) {
+						Notify(`${messages[1 + offset]} for ${field.name}`);
+						console.log("Low");
+						return;
+					} else {
+						return;
+					}
+				}
+			};
 
-      if (field.name.includes("Light")) {
-        if (field.value > returnVal(4)) {
-          Notify("Too bright! Closing shutters");
-          console.log("Bright");
-          return;
-        }
-        if (field.value < returnVal(5)) {
-          Notify("Too dim! Opening shutters");
-          console.log("Dim");
-          return;
-        } else {
-          console.log("Perfect!");
-          return;
-        }
-      }
-    });
-  };
+			// Calls the compare functios
+			compare("Temp", field);
+			compare("Humidity", field, 2);
+			compare("Light", field, 4);
+		});
+	};
 
-  useEffect(() => {
-    fetcher({ setTahanData, setLoading, setSettings });
-    checker();
+	/* 	Fetches and checks values with settings every refresh or interval */
+	useEffect(() => {
+		Fetcher({ setTahanData, setLoading, setSettings });
+		checker();
 
-    const fetcherInterval = setInterval(() => {
-      fetcher({ setTahanData, setLoading, setSettings });
-    }, 20000);
+		const fetcherInterval = setInterval(() => {
+			Fetcher({ setTahanData, setLoading, setSettings });
+		}, 20000);
 
-    const checkerInterval = setInterval(() => {
-      checker();
-    }, 60000);
+		const checkerInterval = setInterval(() => {
+			checker();
+		}, 60000);
 
-    return () => {
-      clearInterval(fetcherInterval);
-      clearInterval(checkerInterval);
-    };
-  }, []);
-  return (
-    <>
-      <div className="header">
-        <h1>Data Tahan-Tahan</h1>
-        <Link
-          to="/settings"
-          id="cog"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          <FontAwesomeIcon icon={faCog} className={hover ? "spin" : ""} />
-        </Link>
-      </div>
-      <div className="settings_container">
-        <h1>Current settings: </h1>
-        <div className="settings">
-          {settingsData.map((setting) => {
-            const name = setting.setting;
-            if (name.includes("humidity")) {
-              return (
-                <h2>
-                  {setting.setting}: {setting.value} %
-                </h2>
-              );
-            } else if (name.includes("lux")) {
-              return (
-                <h2>
-                  {setting.setting}: {setting.value} lx
-                </h2>
-              );
-            } else {
-              return (
-                <h2>
-                  {setting.setting}: {setting.value} °C
-                </h2>
-              );
-            }
-          })}
-        </div>
-      </div>
-      <div className="main_container">
-        {tahanData.map((tahan) => {
-          if (tahan.name.includes("Humidity")) {
-            return (
-              <div key={tahan.id} className="tahan_container">
-                <h1>{tahan.name}</h1>
-                <h1>{tahan.value} %</h1>
-                <h2>Past values:</h2>
-                <iframe src={tahan.graph} className="iframe"></iframe>
-              </div>
-            );
-          } else if (tahan.name.includes("Light")) {
-            return (
-              <div key={tahan.id} className="tahan_container">
-                <h1>{tahan.name}</h1>
-                <h1>{tahan.value} lx</h1>
-                <h2>Past values:</h2>
-                <iframe src={tahan.graph} className="iframe"></iframe>
-              </div>
-            );
-          } else {
-            return (
-              <div key={tahan.id} className="tahan_container">
-                <h1>{tahan.name}</h1>
-                <h1>{tahan.value} °C</h1>
-                <h2>Past values:</h2>
-                <iframe src={tahan.graph} className="iframe"></iframe>
-              </div>
-            );
-          }
-        })}
-      </div>
-    </>
-  );
+		return () => {
+			clearInterval(fetcherInterval);
+			clearInterval(checkerInterval);
+		};
+	}, []);
+
+	return (
+		<>
+			<div className="header">
+				<h1>Data Tahan-Tahan</h1>
+				<Link
+					to="/settings"
+					id="cog"
+					onMouseEnter={() => setHover(true)}
+					onMouseLeave={() => setHover(false)}
+				>
+					<FontAwesomeIcon icon={faCog} className={hover ? "spin" : ""} />
+				</Link>
+			</div>
+			<div className="settings_container">
+				<h1>Current settings: </h1>
+				<div className="settings">
+					{settingsData.map((setting) => {
+						// Maps over the settings
+						const name = setting.setting;
+						if (name.includes("humidity")) {
+							return (
+								<h2>
+									{setting.setting}: {setting.value} %
+								</h2>
+							);
+						} else if (name.includes("lux")) {
+							return (
+								<h2>
+									{setting.setting}: {setting.value} lx
+								</h2>
+							);
+						} else {
+							return (
+								<h2>
+									{setting.setting}: {setting.value} °C
+								</h2>
+							);
+						}
+					})}
+				</div>
+			</div>
+			<div className="main_container">
+				{tahanData.map((tahan) => {
+					if (tahan.name.includes("Humidity")) {
+						return <Display char="%" tahan={tahan} />;
+					} else if (tahan.name.includes("Light")) {
+						return <Display char="lx" tahan={tahan} />;
+					} else {
+						return <Display char="°C" tahan={tahan} />;
+					}
+				})}
+			</div>
+		</>
+	);
 };
 
 export default Dashboard;

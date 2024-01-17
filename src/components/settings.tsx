@@ -5,6 +5,7 @@ import "./settings.css";
 import { useState } from "react";
 import formtype from "../types/formtype";
 
+/* Array of all the possible inputs */
 const Fields = [
 	{
 		label: "Max temperature:",
@@ -44,6 +45,7 @@ const Fields = [
 ];
 
 const Settings = () => {
+	// Track the form's state and handle any change
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState<formtype>({
 		maxtemp: "",
@@ -63,9 +65,11 @@ const Settings = () => {
 	};
 
 	const updateSettings = async (event: any) => {
+		/* 		Updates settings by adding them each as a query
+		Param to the request */
 		event?.preventDefault();
 		let base = new URL(
-			"https://api.thingspeak.com/update?api_key=3MH3CVQDFPIP1G0T",
+			"https://api.thingspeak.com/update?api_key=KREIMHGC02O4Z5OU",
 		);
 
 		for (let i = 0; i < Object.keys(formData).length; i++) {
@@ -90,21 +94,25 @@ const Settings = () => {
 						<FontAwesomeIcon icon={faXmark} />
 					</Link>
 				</div>
-				{Fields.map((field) => (
-					<div key={field.id}>
-						<label htmlFor={field.id}>{field.label}</label>
-						<br />
-						<input
-							id={field.id}
-							type={field.type}
-							onChange={handleChange}
-							value={formData[field.id]}
-							name={field.id}
-							required
-						/>
-						<br />
-					</div>
-				))}
+				{Fields.map((field) => {
+					/* Maps over all of the fields possible to make a form */
+					const value = formData[field.id as keyof formtype];
+					return (
+						<div key={field.id}>
+							<label htmlFor={field.id}>{field.label}</label>
+							<br />
+							<input
+								id={field.id}
+								type={field.type}
+								onChange={handleChange}
+								value={value}
+								name={field.id}
+								required
+							/>
+							<br />
+						</div>
+					);
+				})}
 				<button type="submit" className="submit" onClick={updateSettings}>
 					<FontAwesomeIcon icon={faCheck} />
 				</button>
