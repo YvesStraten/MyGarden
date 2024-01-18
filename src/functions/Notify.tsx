@@ -11,7 +11,11 @@ const Notify = async (message: string) => {
 		permissionGranted = permission === "granted";
 	}
 	if (permissionGranted) {
-		sendNotification({ title: "Tahan info", body: message });
+		sendNotification({
+			title: "MyGarden info",
+			body: `${message}`,
+			sound: "default",
+		});
 	}
 };
 

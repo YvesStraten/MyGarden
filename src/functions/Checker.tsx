@@ -1,7 +1,10 @@
-import checker from "../types/checker";
+import { setting, tahan } from "../types/types";
 import Notify from "./Notify";
 
-const Checker = ({ tahanData, settingsData }: checker) => {
+const Checker = (
+	tahanData: tahan[] | setting[],
+	settingsData: setting[] | tahan[],
+) => {
 	tahanData.map((field) => {
 		const compare = (includes: string, field: any, offset: number = 0) => {
 			// Gets current setting

@@ -1,8 +1,8 @@
-import display from "../types/display";
+import { display } from "../types/types";
 
 const Display = ({ char, tahan }: display) => {
 	return (
-		<div key={tahan.id} className="tahan_container">
+		<div className="tahan_container">
 			<h1>{tahan.name}</h1>
 			<h1>
 				{tahan.value} {char}

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import "./settings.css";
 import { useState } from "react";
-import formtype from "../types/formtype";
+import { formtype } from "../types/types";
 
 /* Array of all the possible inputs */
 const Fields = [
