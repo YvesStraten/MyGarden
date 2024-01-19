@@ -1,7 +1,25 @@
-# Tauri + React + Typescript
+# MyGarden
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+This is a university project in which a combination of the following tools are used:
 
-## Recommended IDE Setup
+- Wokwi
+- ThingSpeak
+- Tauri
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+[Wokwi](https://wokwi.com/projects/386613712557643777) is used for simulating an esp32 with appropriate sensor hardware.
+Meanwhile Thingspeak is used as a data store and Tauri as an application frontend.
+
+# Run in dev mode
+
+First install dependencies:
+`npm i`
+You will also need to install rustup as this project requires rust.
+
+Then run the dev server:
+`npm run tauri dev`
+
+If you want to change the data on ThingSpeak, just run the wokwi simulation and change the sensors' settings.
+
+# Build
+
+`npm run tauri build`
