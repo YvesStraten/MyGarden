@@ -1,38 +1,38 @@
 export type dashboard = {
-	tahanData: tahan[];
-	settingsData: setting[];
+  tahanData: Tahan[];
+  settingsData: Setting[];
 };
 
 /* Defines a type for the objects
 in the array */
-export type tahan = {
-	id: string;
-	name: string;
-	value: number;
-	graph: string;
+export type Tahan = {
+  id: string;
+  name: string;
+  value: number;
+  graph: string;
 };
 
-export type setting = {
-	setting: string;
-	value: number;
+export type Setting = {
+  setting: string;
+  value: number;
 };
 
-export type checker = {
-	tahanData: tahan[];
-	settingsData: setting[];
-};
+// export type checker = {
+//   tahanData: Tahan[];
+//   settingsData: Setting[];
+// };
 
 export type formtype = {
-	maxtemp: number | string;
-	maxhumid: number | string;
-	maxlight: number | string;
+  maxtemp: number | string;
+  maxhumid: number | string;
+  maxlight: number | string;
 
-	mintemp: number | string;
-	minhumid: number | string;
-	minlight: number | string;
+  mintemp: number | string;
+  minhumid: number | string;
+  minlight: number | string;
 };
 
 export type display = {
-	char: string;
-	tahan: tahan;
+  char: string;
+  tahan: Tahan;
 };
