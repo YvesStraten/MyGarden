@@ -1,70 +1,61 @@
 import { useEffect, useState } from "react";
 import Dashboard from "./components/Dashboard";
-import fetcher from "./functions/fetcher";
 import checker from "./functions/checker";
 import { Setting, Tahan } from "./types/types";
 import { invoke } from "@tauri-apps/api";
 
 function App() {
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [tahanData, setTahanData] = useState<Tahan[]>([]);
-  const [settingsData, setSettings] = useState<Setting[]>([]);
+    const [isLoading, setLoading] = useState<boolean>(true);
+    const [tahanData, setTahanData] = useState<Tahan[]>([]);
+    const [settingsData, setSettings] = useState<Setting[]>([]);
 
-  /* 	Fetches and checks values with settings every refresh or interval */
-  useEffect(() => {
-    let arr: any;
-    fetcher()
-      .then(async (data) => {
-        const test: string  = await invoke("fetchplots");
-          const lol = JSON.parse(test);
-        console.log(lol);
+    /* 	Fetches and checks values with settings every refresh or interval */
+    useEffect(() => {
+        let arr: any = [];
+        async function load() {
+            const plots: Array<Tahan> = await invoke("fetchplots");
+            const settings: Array<Setting> = await invoke("getsettings");
 
-        const [tahan, settings] = data;
-        setTahanData(tahan);
-        setSettings(settings);
-        setLoading(false);
+            setTahanData(plots);
+            setSettings(settings);
 
-        return [tahan, settings];
-      })
-      .then((fields) => {
-        console.log(fields);
-        const [tahan, settings] = fields;
-        console.log(tahan);
+            setLoading(false);
+            checker(plots, settings);
 
-        checker(tahan, settings);
+            arr = [plots, settings]
+        };
 
-        arr = [tahan, settings];
-      });
+        load();
 
-    const fetcherInterval = setInterval(() => {
-      fetcher().then((data) => {
-        const [tahan, settings] = data;
-        setTahanData(tahan);
-        setSettings(settings);
 
-        arr = [tahan, settings];
-      });
-    }, 20000);
+        const fetcherInterval = setInterval(async () => {
+            const plots: Array<Tahan> = await invoke("fetchplots");
+            const settings: Array<Setting> = await invoke("getsettings");
+            setTahanData(plots);
+            setSettings(settings);
 
-    const notifInterval = setInterval(() => {
-      checker(arr[0], arr[1]);
-    }, 40000);
+            arr = [plots, settings];
+        }, 20000);
 
-    return () => {
-      clearInterval(fetcherInterval);
-      clearInterval(notifInterval);
-    };
-  }, []);
+        const notifInterval = setInterval(() => {
+            checker(arr[0], arr[1]);
+        }, 40000);
 
-  return (
-    <>
-      {isLoading === false ? (
-        <Dashboard tahanData={tahanData} settingsData={settingsData} />
-      ) : (
-        <h1>Loading...</h1>
-      )}
-    </>
-  );
+        return () => {
+            clearInterval(fetcherInterval);
+            clearInterval(notifInterval);
+        };
+    }, []);
+
+    return (
+        <>
+            {isLoading === false ? (
+                <Dashboard tahanData={tahanData} settingsData={settingsData} />
+            ) : (
+                <h1>Loading...</h1>
+            )}
+        </>
+    );
 }
 
 export default App;
