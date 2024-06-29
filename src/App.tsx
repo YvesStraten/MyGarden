@@ -3,6 +3,7 @@ import Dashboard from "./components/Dashboard";
 import fetcher from "./functions/fetcher";
 import checker from "./functions/checker";
 import { Setting, Tahan } from "./types/types";
+import { invoke } from "@tauri-apps/api";
 
 function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -13,7 +14,11 @@ function App() {
   useEffect(() => {
     let arr: any;
     fetcher()
-      .then((data) => {
+      .then(async (data) => {
+        const test: string  = await invoke("fetchplots");
+          const lol = JSON.parse(test);
+        console.log(lol);
+
         const [tahan, settings] = data;
         setTahanData(tahan);
         setSettings(settings);

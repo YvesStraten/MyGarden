@@ -26,6 +26,9 @@
       packages = with pkgs; [
         curl
         cargo-tauri
+        rustc
+        rust-analyzer
+        cargo
         wget
         pkg-config
         dbus
