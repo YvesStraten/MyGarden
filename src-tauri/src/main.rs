@@ -40,7 +40,7 @@ async fn getsettings() -> Result<Vec<Setting>, ()> {
 
         let json: Value = serde_json::from_str(&data).expect("Did not work!");
 
-        let length = &json["feeds"][0].as_object().unwrap().keys().len() - 2;
+        let length = &json["feeds"][0].as_object().unwrap().keys().len() - 1;
 
         for i in 1..length {
             let channel_data = &json["channel"];
@@ -75,7 +75,7 @@ async fn fetchplots() -> Result<Vec<Data>, ()> {
         let data = content.as_str().unwrap();
         let json: Value = serde_json::from_str(&data).expect("Did not work!");
 
-        let length = &json["feeds"][0].as_object().unwrap().keys().len() - 2;
+        let length = &json["feeds"][0].as_object().unwrap().keys().len() - 1;
 
         for i in 1..length {
             let channel_data = &json["channel"];

@@ -15,6 +15,7 @@ function App() {
         async function load() {
             const plots: Array<Tahan> = await invoke("fetchplots");
             const settings: Array<Setting> = await invoke("getsettings");
+            console.log(plots);
 
             setTahanData(plots);
             setSettings(settings);
