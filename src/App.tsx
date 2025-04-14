@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Dashboard from "./components/Dashboard";
 import checker from "./functions/checker";
 import { Setting, Tahan } from "./types/types";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 
 function App() {
     const [isLoading, setLoading] = useState<boolean>(true);
