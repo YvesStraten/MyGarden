@@ -20,6 +20,9 @@ uuid = { version =  "1.9.1", features = [ "serde" ] }
 tauri-plugin-shell = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-http = "2.4.3"
+dotenvy = "0.15.7"
+dotenvy_macro = "0.15.7"
+dynfmt = { version = "0.1.5", features = ["curly"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
