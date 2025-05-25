@@ -1,20 +1,8 @@
+import { Data, Setting } from "../bindings";
+
 export type dashboard = {
-  tahanData: Tahan[];
+  tahanData: Data[];
   settingsData: Setting[];
-};
-
-/* Defines a type for the objects
-in the array */
-export type Tahan = {
-  id: string;
-  name: string;
-  value: number;
-  graph: string;
-};
-
-export type Setting = {
-  setting: string;
-  value: number;
 };
 
 // export type checker = {
@@ -34,5 +22,5 @@ export type formtype = {
 
 export type display = {
   char: string;
-  tahan: Tahan;
+  tahan: Data;
 };

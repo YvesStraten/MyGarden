@@ -5,6 +5,7 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Display from "./Display";
 import "./Dashboard.css";
 import { dashboard } from "../types/types";
+import { Data, Setting } from "../bindings";
 
 const Dashboard = ({ tahanData, settingsData }: dashboard) => {
   /* 	Stores states for the cog, data and settings */
@@ -26,25 +27,25 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
       <div className="settings_container">
         <h1>Current settings: </h1>
         <div className="settings">
-          {settingsData.map((setting) => {
+          {settingsData.map((setting: Setting) => {
             // Maps over the settings
-            const name = setting.setting;
+            const name = setting.name;
             if (name.includes("humidity")) {
               return (
-                <h2 key={setting.setting}>
-                  {setting.setting}: {setting.value} %
+                <h2 key={setting.name}>
+                  {setting.name}: {setting.value} %
                 </h2>
               );
             } else if (name.includes("lux")) {
               return (
-                <h2 key={setting.setting}>
-                  {setting.setting}: {setting.value} lx
+                <h2 key={setting.name}>
+                  {setting.name}: {setting.value} lx
                 </h2>
               );
             } else {
               return (
-                <h2 key={setting.setting}>
-                  {setting.setting}: {setting.value} °C
+                <h2 key={setting.name}>
+                  {setting.name}: {setting.value} °C
                 </h2>
               );
             }
@@ -52,8 +53,9 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
         </div>
       </div>
       <div className="main_container">
-        {tahanData.map((tahan) => {
+        {tahanData.map((tahan: Data) => {
           if (tahan.name.includes("Humidity")) {
+            console.log(tahan);
             return <Display key={tahan.id} char="%" tahan={tahan} />;
           } else if (tahan.name.includes("Light")) {
             return <Display key={tahan.id} char="lx" tahan={tahan} />;

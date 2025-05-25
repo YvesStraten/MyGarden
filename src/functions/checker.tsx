@@ -1,13 +1,10 @@
-import { Setting, Tahan } from "../types/types";
+import { Data, Setting } from "../bindings";
 import notify from "./notify";
 
 // TODO: Fix these types
-const checker = (
-  tahanData: Array<Tahan> | Array<Setting>,
-  settingsData: Array<Setting> | Array<Tahan>,
-) => {
-  tahanData.map((field: any) => {
-    const compare = (includes: string, field: any, offset: number = 0) => {
+const checker = (tahanData: Array<Data>, settingsData: Array<Setting>) => {
+  tahanData.map((field: Data) => {
+    const compare = (includes: string, field: Data, offset: number = 0) => {
       // Gets current setting
       const returnVal = (index: number) => {
         return settingsData[index]["value"];
@@ -37,7 +34,7 @@ const checker = (
       }
     };
 
-    // Calls the compare functios
+    // Calls the compare functions
     compare("Temp", field);
     compare("Humidity", field, 2);
     compare("Light", field, 4);
