@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Display from "./Display";
-import "./Dashboard.css";
+// import "./Dashboard.css";
 import { dashboard } from "../types/types";
 import { Data, Setting } from "../bindings";
 
@@ -13,8 +13,8 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
 
   return (
     <>
-      <div className="header">
-        <h1>Data Tahan-Tahan</h1>
+      <div className="header border flex place-content-center flex-row p-3 m-auto rounded-full w-1/2 my-5 gap-5">
+        <h1 className="font-bold">Data Tahan-Tahan</h1>
         <Link
           to="/settings"
           id="cog"
@@ -24,9 +24,9 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
           <FontAwesomeIcon icon={faCog} className={hover ? "spin" : ""} />
         </Link>
       </div>
-      <div className="settings_container">
-        <h1>Current settings: </h1>
-        <div className="settings">
+      <div className="settings_container border flex items-center flex-col rounded-full m-auto p-1 w-1/3">
+        <h1 className="font-bold">Current settings:</h1>
+        <div className="settings flex flex-col items-center">
           {settingsData.map((setting: Setting) => {
             // Maps over the settings
             const name = setting.name;
@@ -52,7 +52,7 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
           })}
         </div>
       </div>
-      <div className="main_container">
+      <div className="main_container flex flex-wrap items-center m-auto gap-5">
         {tahanData.map((tahan: Data) => {
           if (tahan.name.includes("Humidity")) {
             console.log(tahan);
