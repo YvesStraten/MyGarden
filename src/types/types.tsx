@@ -5,12 +5,7 @@ export type dashboard = {
   settingsData: Setting[];
 };
 
-// export type checker = {
-//   tahanData: Tahan[];
-//   settingsData: Setting[];
-// };
-
-export type formtype = {
+export type settingsForm = {
   maxtemp: string;
   maxhumid: string;
   maxlight: string;

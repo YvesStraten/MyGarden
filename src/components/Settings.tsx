@@ -2,7 +2,7 @@ import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { formtype } from "../types/types";
+import { settingsForm } from "../types/types";
 
 /* Array of all the possible inputs */
 const fields = [
@@ -46,7 +46,7 @@ const fields = [
 const Settings = () => {
   // Track the form's state and handle any change
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<formtype>({
+  const [formData, setFormData] = useState<settingsForm>({
     maxtemp: "",
     mintemp: "",
     maxhumid: "",
@@ -98,7 +98,7 @@ const Settings = () => {
         <div className="flex flex-col gap-2">
           {fields.map((field) => {
             /* Maps over all of the fields possible to make a form */
-            const value = formData[field.id as keyof formtype];
+            const value = formData[field.id as keyof settingsForm];
             return (
               <div key={field.id}>
                 <label htmlFor={field.id} className="font-bold">
