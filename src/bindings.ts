@@ -33,7 +33,9 @@ async getsettings() : Promise<Result<Setting[], null>> {
 
 /** user-defined types **/
 
-export type Data = { id: string; name: string; value: number; graph: string }
+export type Data = { id: string; name: string; value: number; graph: Graph }
+export type Dataset = { label: string; points: number[] }
+export type Graph = { labels: string[]; dataset: Dataset }
 export type Setting = { name: string; value: number }
 
 /** tauri-specta globals **/

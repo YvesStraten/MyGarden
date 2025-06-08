@@ -6,6 +6,7 @@ import Display from "./Display";
 // import "./Dashboard.css";
 import { dashboard } from "../types/types";
 import { Data, Setting } from "../bindings";
+import SettingContainer from "./SettingContainer";
 
 const Dashboard = ({ tahanData, settingsData }: dashboard) => {
   /* 	Stores states for the cog, data and settings */
@@ -13,7 +14,7 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
 
   return (
     <>
-      <div className="header border flex place-content-center flex-row p-3 m-auto rounded-full w-1/2 my-5 gap-5">
+      <div className="header border flex place-content-center flex-row p-3 m-auto rounded-full w-1/6 my-5 gap-5">
         <h1 className="font-bold">Data Tahan-Tahan</h1>
         <Link
           to="/settings"
@@ -21,41 +22,32 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
-          <FontAwesomeIcon icon={faCog} className={hover ? "spin" : ""} />
+          <FontAwesomeIcon
+            icon={faCog}
+            className={hover ? "animate-spin" : ""}
+          />
         </Link>
       </div>
-      <div className="settings_container border flex items-center flex-col rounded-full m-auto p-1 w-1/3">
-        <h1 className="font-bold">Current settings:</h1>
-        <div className="settings flex flex-col items-center">
+      <div className="flex flex-col m-auto p-1 w-1/6 gap-3">
+        <h1 className="font-bold text-center">Current settings:</h1>
+        <div className="grid grid-rows-2 grid-cols-2 gap-3">
           {settingsData.map((setting: Setting) => {
             // Maps over the settings
             const name = setting.name;
+            const base = name + ": " + setting.value;
             if (name.includes("humidity")) {
-              return (
-                <h2 key={setting.name}>
-                  {setting.name}: {setting.value} %
-                </h2>
-              );
+              return <SettingContainer setting={base + "%"} />;
             } else if (name.includes("lux")) {
-              return (
-                <h2 key={setting.name}>
-                  {setting.name}: {setting.value} lx
-                </h2>
-              );
+              return <SettingContainer setting={base + "lx"} />;
             } else {
-              return (
-                <h2 key={setting.name}>
-                  {setting.name}: {setting.value} °C
-                </h2>
-              );
+              return <SettingContainer setting={base + "°C"} />;
             }
           })}
         </div>
       </div>
-      <div className="main_container flex flex-wrap items-center m-auto gap-5">
+      <div className="m-auto gap-3 w-1/2 grid grid-rows-2 grid-cols-2">
         {tahanData.map((tahan: Data) => {
           if (tahan.name.includes("Humidity")) {
-            console.log(tahan);
             return <Display key={tahan.id} char="%" tahan={tahan} />;
           } else if (tahan.name.includes("Light")) {
             return <Display key={tahan.id} char="lx" tahan={tahan} />;

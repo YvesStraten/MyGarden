@@ -1,22 +1,60 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
+use dynfmt::{Format, SimpleCurlyFormat};
 use serde::{Deserialize, Serialize};
+use tauri_plugin_http::reqwest::Client;
+
+#[derive(Debug)]
+pub struct ThingSpeak {
+    client: Client,
+    channel_id: u32,
+    api_key: String,
+}
+
+static CHANNEL_FORMAT: &str = "https://api.thingspeak.com/channels/{}/feeds.json?api_key={}";
+
+impl ThingSpeak {
+    pub fn new(client: Client, channel_id: u32, api_key: String) -> Self {
+        Self {
+            client,
+            channel_id,
+            api_key,
+        }
+    }
+
+    pub async fn get_channel_feeds(&self) -> tauri_plugin_http::Result<ThingSpeakResponse> {
+        let url = SimpleCurlyFormat
+            .format(
+                CHANNEL_FORMAT,
+                [&self.channel_id.to_string(), &self.api_key],
+            )
+            .unwrap();
+        let req = self.client.get(url.as_ref());
+        let res: ThingSpeakResponse = req.send().await?.json().await?;
+
+        Ok(res)
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ThingSpeakResponse {
     pub channel: Channel,
-    pub feeds: Vec<Feed>,
+    pub feeds: Vec<Entry>,
 }
 
 impl ThingSpeakResponse {
-    pub fn get_latest_entry_values(&self) -> ChannelIterator<'_> {
+    pub fn get_latest_entry_values(&self) -> FeedIterator<'_> {
         let latest_entry_id = self.channel.last_entry_id;
         self.get_entry_values(latest_entry_id)
     }
 
-    pub fn get_entry_values(&self, entry_id: usize) -> ChannelIterator<'_> {
-        ChannelIterator::new(self, entry_id)
+    pub fn get_entry_values(&self, entry_id: usize) -> FeedIterator<'_> {
+        FeedIterator::new(self, entry_id)
+    }
+
+    pub fn get_entries(&self) -> impl Iterator<Item = &Entry> {
+        self.feeds.iter()
     }
 }
 
@@ -34,7 +72,7 @@ pub struct Channel {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Feed {
+pub struct Entry {
     pub created_at: DateTime<Utc>,
     pub entry_id: usize,
     #[serde(flatten)]
@@ -42,13 +80,13 @@ pub struct Feed {
 }
 
 #[derive(Debug)]
-pub struct ChannelIterator<'a> {
+pub struct FeedIterator<'a> {
     thingspeak: &'a ThingSpeakResponse,
     entry_id: usize,
     current_field: usize,
 }
 
-impl<'a> ChannelIterator<'a> {
+impl<'a> FeedIterator<'a> {
     pub fn new(thingspeak: &'a ThingSpeakResponse, entry_id: usize) -> Self {
         Self {
             thingspeak,
@@ -58,7 +96,7 @@ impl<'a> ChannelIterator<'a> {
     }
 }
 
-impl Iterator for ChannelIterator<'_> {
+impl Iterator for FeedIterator<'_> {
     type Item = ChannelValue;
 
     fn next(&mut self) -> Option<Self::Item> {
