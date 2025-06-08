@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import Display from "./Display";
-// import "./Dashboard.css";
 import { dashboard } from "../types/types";
 import { Data, Setting } from "../bindings";
 import SettingContainer from "./SettingContainer";
@@ -14,7 +13,7 @@ const Dashboard = ({ tahanData, settingsData }: dashboard) => {
 
   return (
     <>
-      <div className="header border flex place-content-center flex-row p-3 m-auto rounded-full w-1/6 my-5 gap-5">
+      <div className="border flex place-content-center flex-row p-3 m-auto rounded-full w-1/6 my-5 gap-5">
         <h1 className="font-bold">Data Tahan-Tahan</h1>
         <Link
           to="/settings"

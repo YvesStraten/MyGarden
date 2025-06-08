@@ -1,12 +1,11 @@
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
-import "./settings.css";
 import { useState } from "react";
 import { formtype } from "../types/types";
 
 /* Array of all the possible inputs */
-const Fields = [
+const fields = [
   {
     label: "Max temperature:",
     type: "number",
@@ -56,7 +55,7 @@ const Settings = () => {
     minlight: "",
   });
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -64,11 +63,11 @@ const Settings = () => {
     }));
   };
 
-  const updateSettings = async (event: any) => {
+  const updateSettings = async (event: React.MouseEvent<HTMLButtonElement>) => {
     /* 		Updates settings by adding them each as a query
-		Param to the request */
+		params to the request */
     event?.preventDefault();
-    let base = new URL(
+    const base = new URL(
       "https://api.thingspeak.com/update?api_key=KREIMHGC02O4Z5OU",
     );
 
@@ -87,33 +86,45 @@ const Settings = () => {
   };
 
   return (
-    <div className="formSettings">
+    <div className="flex flex-col items-center">
       <form>
-        <div className="icon">
-          <Link to="/" id="X">
-            <FontAwesomeIcon icon={faXmark} />
-          </Link>
+        <Link
+          to="/"
+          id="X"
+          className="border rounded-full pr-1 pl-1 bg-gray-50 hover:bg-gray-200"
+        >
+          <FontAwesomeIcon icon={faXmark} />
+        </Link>
+        <div className="flex flex-col gap-2">
+          {fields.map((field) => {
+            /* Maps over all of the fields possible to make a form */
+            const value = formData[field.id as keyof formtype];
+            return (
+              <div key={field.id}>
+                <label htmlFor={field.id} className="font-bold">
+                  {field.label}
+                </label>
+                <br />
+                <input
+                  id={field.id}
+                  type={field.type}
+                  onChange={handleChange}
+                  className="bg-gray-50"
+                  placeholder="0"
+                  value={value}
+                  name={field.id}
+                  required
+                />
+                <br />
+              </div>
+            );
+          })}
         </div>
-        {Fields.map((field) => {
-          /* Maps over all of the fields possible to make a form */
-          const value = formData[field.id as keyof formtype];
-          return (
-            <div key={field.id}>
-              <label htmlFor={field.id}>{field.label}</label>
-              <br />
-              <input
-                id={field.id}
-                type={field.type}
-                onChange={handleChange}
-                value={value}
-                name={field.id}
-                required
-              />
-              <br />
-            </div>
-          );
-        })}
-        <button type="submit" className="submit" onClick={updateSettings}>
+        <button
+          type="submit"
+          className="border rounded-full pr-1 pl-1 bg-gray-50 hover:bg-gray-200"
+          onClick={updateSettings}
+        >
           <FontAwesomeIcon icon={faCheck} />
         </button>
       </form>

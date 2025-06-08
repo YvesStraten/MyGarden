@@ -3,21 +3,21 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./styles.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Settings from "./components/settings";
+import Settings from "./components/Settings";
 
 const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <App />,
-	},
-	{
-		path: "/settings",
-		element: <Settings />,
-	},
+  {
+    path: "/",
+    element: <App />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-	<React.StrictMode>
-		<RouterProvider router={router} />
-	</React.StrictMode>,
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
 );

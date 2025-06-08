@@ -11,13 +11,13 @@ export type dashboard = {
 // };
 
 export type formtype = {
-  maxtemp: number | string;
-  maxhumid: number | string;
-  maxlight: number | string;
+  maxtemp: string;
+  maxhumid: string;
+  maxlight: string;
 
-  mintemp: number | string;
-  minhumid: number | string;
-  minlight: number | string;
+  mintemp: string;
+  minhumid: string;
+  minlight: string;
 };
 
 export type display = {
