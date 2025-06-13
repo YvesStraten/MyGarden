@@ -59,6 +59,7 @@ impl ThingSpeak {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Channel {
     /// Channel details
+    #[serde(rename = "channel")]
     pub details: ChannelDetails,
     /// Channel feeds
     pub feeds: Vec<Entry>,
