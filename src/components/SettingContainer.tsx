@@ -1,13 +1,13 @@
-type props = {
-  setting: string;
-};
+import { Setting } from "@/bindings";
+import { Card, CardDescription, CardTitle } from "./ui/card";
+import { getSymbol } from "@/functions/utils";
 
-const SettingContainer = ({ setting }: props) => {
+export default function SettingContainer(props: Setting) {
+  const { name, value } = props;
   return (
-    <div className="border">
-      <h2 className="text-center">{setting}</h2>
-    </div>
+    <Card className="p-5">
+      <CardTitle className="font-center">{name}</CardTitle>
+      <CardDescription>{value + ": " + getSymbol(name, 1)}</CardDescription>
+    </Card>
   );
-};
-
-export default SettingContainer;
+}

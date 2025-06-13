@@ -14,8 +14,3 @@ export type settingsForm = {
   minhumid: string;
   minlight: string;
 };
-
-export type display = {
-  char: string;
-  tahan: Data;
-};
