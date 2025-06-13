@@ -84,18 +84,19 @@ impl Channel {
     /// Gets an iterator over all entry values from the channel
     pub fn get_all_entry_values<'a>(&'a self) -> impl Iterator<Item = ChannelValue<'a>> + 'a {
         let details = &self.details.field_names;
-        let feeds_iterator = self
-            .feeds
-            .iter()
-            .map(|feed| &feed.fields)
-            .flatten()
-            .filter_map(|(key, value)| value.as_ref().map(|val| (key, val)));
+        let feeds_iterator = self.feeds.iter().flat_map(|feed| {
+            feed.fields.iter().filter_map(move |(key, value_option)| {
+                value_option
+                    .as_ref()
+                    .map(|value| (feed.created_at, key, value))
+            })
+        });
 
         feeds_iterator
-            .map(|(key, value)| {
+            .map(|(created_at, key, value)| {
                 let current_name = details.get(key)?.as_ref()?;
 
-                Some(ChannelValue::new(current_name, value))
+                Some(ChannelValue::new(created_at, current_name, value))
             })
             .flatten()
     }
@@ -176,16 +177,23 @@ impl<'a> Iterator for ChannelIterator<'a> {
             .iter()
             .find(|entry| entry.entry_id == self.entry_id)?;
 
+        let created_at = feed_entry.created_at;
         let value = feed_entry.fields.get(&current_field)?.as_ref()?;
 
         self.current_field += 1;
-        Some(Self::Item { label, value })
+        Some(Self::Item {
+            created_at,
+            label,
+            value,
+        })
     }
 }
 
 /// Represents a value from a channel
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChannelValue<'a> {
+    /// When the value was created
+    pub created_at: DateTime<Utc>,
     /// Its name
     pub label: &'a str,
     /// Its value
@@ -194,7 +202,11 @@ pub struct ChannelValue<'a> {
 
 impl<'a> ChannelValue<'a> {
     /// Constructs a new ChannelValue
-    pub fn new(label: &'a str, value: &'a str) -> Self {
-        Self { label, value }
+    pub fn new(created_at: DateTime<Utc>, label: &'a str, value: &'a str) -> Self {
+        Self {
+            created_at,
+            label,
+            value,
+        }
     }
 }
