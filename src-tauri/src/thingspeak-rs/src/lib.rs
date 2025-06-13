@@ -82,7 +82,7 @@ impl Channel {
     }
 
     /// Gets an iterator over all entry values from the channel
-    pub fn get_all_entry_values<'a>(&'a self) -> impl Iterator<Item = ChannelValue<'a>> + 'a {
+    pub fn get_all_entry_values(&self) -> impl Iterator<Item = ChannelValue<'_>> {
         let details = &self.details.field_names;
         let feeds_iterator = self.feeds.iter().flat_map(|feed| {
             feed.fields.iter().filter_map(move |(key, value_option)| {
@@ -92,13 +92,11 @@ impl Channel {
             })
         });
 
-        feeds_iterator
-            .map(|(created_at, key, value)| {
-                let current_name = details.get(key)?.as_ref()?;
+        feeds_iterator.filter_map(|(created_at, key, value)| {
+            let current_name = details.get(key)?.as_ref()?;
 
-                Some(ChannelValue::new(created_at, current_name, value))
-            })
-            .flatten()
+            Some(ChannelValue::new(created_at, current_name, value))
+        })
     }
 }
 
