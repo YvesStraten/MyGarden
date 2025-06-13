@@ -27,6 +27,7 @@ specta = { version = "=2.0.0-rc.22", features = ["function", "tokio", "uuid", "s
 specta-typescript = "^0.0.9"
 tauri-specta = { version = "=2.0.0-rc.21", features = ["derive", "javascript", "typescript"] }
 chrono = { version = "0.4.41", features = ["serde"] }
+thingspeak-rs = { path = "./src/thingspeak-rs"}
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

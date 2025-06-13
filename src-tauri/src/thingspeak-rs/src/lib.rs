@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
 use dynfmt::{Format, SimpleCurlyFormat};
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use tauri_plugin_http::reqwest::Client;
 
 #[derive(Debug)]
 pub struct ThingSpeak {
@@ -23,7 +23,7 @@ impl ThingSpeak {
         }
     }
 
-    pub async fn get_channel_feeds(&self) -> tauri_plugin_http::Result<ThingSpeakResponse> {
+    pub async fn get_channel_feeds(&self) -> reqwest::Result<ThingSpeakResponse> {
         let url = SimpleCurlyFormat
             .format(
                 CHANNEL_FORMAT,

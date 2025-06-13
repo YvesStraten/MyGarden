@@ -3,7 +3,6 @@
 
 use chrono::Local;
 use dotenvy_macro::dotenv;
-use models::ThingSpeak;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use specta_typescript::Typescript;
@@ -11,8 +10,7 @@ use std::str::FromStr;
 use tauri::State;
 use tauri_plugin_http::reqwest::Client;
 use tauri_specta::{collect_commands, Builder};
-
-mod models;
+use thingspeak_rs::ThingSpeak;
 
 static CHANNEL_FORMAT: &str = "https://api.thingspeak.com/channels/{}/feeds.json?api_key={}";
 static GRAPH_URL: &str = "https://thingspeak.com/channels/{}/charts/{}?bgcolor=%23ffffff&color=%23d62020&results=60&type=line&api_key={}";
