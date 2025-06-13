@@ -12,9 +12,6 @@ use tauri_plugin_http::reqwest::Client;
 use tauri_specta::{collect_commands, Builder};
 use thingspeak_rs::ThingSpeak;
 
-static CHANNEL_FORMAT: &str = "https://api.thingspeak.com/channels/{}/feeds.json?api_key={}";
-static GRAPH_URL: &str = "https://thingspeak.com/channels/{}/charts/{}?bgcolor=%23ffffff&color=%23d62020&results=60&type=line&api_key={}";
-
 pub struct Ctx {
     http: Client,
     plots: ThingSpeak,
@@ -40,26 +37,11 @@ struct Data {
 }
 
 #[derive(Debug, Serialize, Deserialize, Type)]
-struct Graph {
-    labels: Vec<String>,
-    dataset: Dataset,
-}
+struct Graph(Vec<(String, f64)>);
 
 impl Graph {
-    pub fn new(labels: Vec<String>, dataset: Dataset) -> Self {
-        Self { labels, dataset }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize, Type)]
-struct Dataset {
-    label: String,
-    points: Vec<f32>,
-}
-
-impl Dataset {
-    pub fn new(label: String, points: Vec<f32>) -> Self {
-        Self { label, points }
+    pub fn new(dataset: Vec<(String, f64)>) -> Self {
+        Self(dataset)
     }
 }
 
@@ -73,12 +55,12 @@ struct Setting {
 #[specta::specta]
 async fn getsettings(ctx: State<'_, Ctx>) -> Result<Vec<Setting>, ()> {
     // TODO: FIX
-    let response = ctx.settings.get_channel_feeds().await.unwrap();
+    let response = ctx.settings.get_channel().await.unwrap();
     let mut parsed: Vec<Setting> = vec![];
     for value in response.get_latest_entry_values() {
         parsed.push(Setting {
-            name: value.label,
-            value: u32::from_str(&value.value).unwrap(),
+            name: value.label.to_string(),
+            value: u32::from_str(value.value).unwrap(),
         });
     }
 
@@ -90,32 +72,29 @@ async fn getsettings(ctx: State<'_, Ctx>) -> Result<Vec<Setting>, ()> {
 async fn fetchplots(ctx: State<'_, Ctx>) -> Result<Vec<Data>, ()> {
     let plots = &ctx.plots;
     // TODO: Fix
-    let response = plots.get_channel_feeds().await.unwrap();
+    let response = plots.get_channel().await.unwrap();
     let mut parsed: Vec<Data> = vec![];
     for (index, value) in response.get_latest_entry_values().enumerate() {
-        let name = value.label;
-        let value = f64::from_str(&value.value).unwrap();
-        let entries: Vec<f32> = response
-            .get_entries()
-            .flat_map(|entry| entry.fields.get(&format!("field{}", index + 1)))
+        let name = value.label.to_string();
+        let current_value = f64::from_str(&value.value).unwrap();
+
+        let values = response
+            .get_all_entry_values()
+            .filter(|val| val.label == name)
+            .map(|channel_value| {
+                let parsed = channel_value.value.parse::<f64>().ok()?;
+                let label = channel_value.created_at.to_string();
+                Some((label, parsed))
+            })
             .flatten()
-            .map(|entry| entry.parse().unwrap())
             .collect();
 
-        let tz = Local::now().timezone();
-        let labels: Vec<String> = response
-            .get_entries()
-            .map(|entry| format!("{}", entry.created_at.with_timezone(&tz).format("%H:%M")))
-            .collect();
-
-        let dataset = Dataset::new(name.clone(), entries);
-
-        let graph = Graph::new(labels, dataset);
+        let graph = Graph::new(values);
 
         let data = Data {
             id: uuid::Uuid::new_v4(),
             name,
-            value,
+            value: current_value,
             graph,
         };
 
